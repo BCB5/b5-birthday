@@ -7,10 +7,10 @@ import smtplib
 import time
 
 # Email to send from
-fromaddr = 'samirw@mit.edu'
-username = 'swadhwania96@gmail.com'
-password = 'rfwjgtzjrzuvewld'
-birthday_chair = 'Amelia Bryan (aybryan@mit.edu)'
+fromaddr = 'babcockj@mit.edu'
+username = 'jobabcock95@gmail.com'
+password = 'pxolygbedozsiebx'
+birthday_chair = 'Joe Babcock (babcockj@mit.edu)'
 
 # Dates
 now = datetime.datetime.now()
@@ -18,15 +18,15 @@ one_week = now + datetime.timedelta(days=7)
 one_day = now + datetime.timedelta(days=1)
 
 # Columns
+suite_col = 0
 name_col = 1
 kerberos_col = 2
-birthday_col = 6
-candy_col = 7
+birthday_col = 4
+
 
 # Filename
-data_file = 'download.xlsx'
-b5_bday_sheet_name = 'B5 Birthdays'
-b5_roster_sheet_name = 'B5 Roster'
+data_file = 'Burton5_Roster_and_Birthdays.xlsx'
+b5_bday_sheet_name = 'Fall2016'
 
 xl_workbook = xlrd.open_workbook(data_file)
 
@@ -41,10 +41,10 @@ def main():
             pass
 
 def convert_date(row):
+
     try:
         xl_date = row[birthday_col].value
         bday_date = xlrd.xldate_as_tuple(xl_date, xl_workbook.datemode)
-
         if check_date(bday_date):
             return bday_date
     except:
@@ -59,47 +59,36 @@ def check_date(bday):
     return False
 
 def find_suite(row, date):
+    emails = []
 
-    def find_others(suite):
-        others = []
-        for row in range(b5_roster_sheet.nrows):
-            suite_check = str(b5_roster_sheet.row(row)[0])
-            suite_check = suite_check[-5:-2]
-            if suite_check == suite:
-                others.append(str(b5_roster_sheet.row(row)[2]))
+    b5_sheet = xl_workbook.sheet_by_name(b5_bday_sheet_name)
+    room = str(row[suite_col].value)
+    suite = room[:-1]
+    for i in range(b5_sheet.nrows):
+        row_temp = b5_sheet.row(i)
+        room_temp = str(row_temp[suite_col].value)
+        suite_temp = room_temp[:-1]
+        if suite_temp == suite and room_temp != room:
+            emails.append(str(row_temp[kerberos_col].value))
 
-        return others
-
-    b5_roster_sheet = xl_workbook.sheet_by_name(b5_roster_sheet_name)
-    kerb = str(row[kerberos_col])
-    stu_name = str(row[name_col])[7:-1]
-    stu_candy = str(row[candy_col])[7:-1]
-    bday_date = str(date[1]) + '/' + str(date[2])
-
-
-    for row in range(b5_roster_sheet.nrows):
-        name = str(b5_roster_sheet.row(row)[2])
-        if name == kerb:
-            suite = str(b5_roster_sheet.row(row)[0])
-            suite = suite[-5:-2]
-            suite_mates = find_others(suite)
-            suite_mates.remove(kerb)
-
-    emails = [s[7:-1] + "@mit.edu" for s in suite_mates]
+    emails = [x + "@mit.edu" for x in emails]
     emails.append('burton5-exec@mit.edu')
 
-    send_email(stu_name, bday_date, stu_candy, emails)
+    name = str(row[name_col].value)
+    date = str(date[1]) + '/' + str(date[2])
 
-def send_email(name, birthday, candy, emails):
+    send_email(name, date, emails)
+
+def send_email(name, birthday, emails):
     message = """Subject: Upcoming Birthday
 
 Hello!
 
-This is an automated message to remind you that on %(birthday)s, %(name)s will be celebrating their birthday! Their favorite candy is: %(candy)s. Remember, it is the responsibility of the suite to make/get something to celebrate. If you do not have ingredients or would like to buy something, please email %(chair)s. Have a great day!
+This is an automated message to remind you that on %(birthday)s, %(name)s will be celebrating their birthday! Remember, it is the responsibility of the suite to make/get something to celebrate. If you do not have ingredients or would like to buy something, please email %(chair)s. Have a great day!
 
 Best wishes,
 B5 Exec
-""" % {"birthday" : birthday, "name" : name, "candy" : candy, "chair" : birthday_chair}
+""" % {"birthday" : birthday, "name" : name, "chair" : birthday_chair}
 
     server = smtplib.SMTP('smtp.gmail.com:587')
     server.starttls()
