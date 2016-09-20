@@ -17,6 +17,7 @@ now = datetime.datetime.now()
 one_week = now + datetime.timedelta(days=7)
 one_day = now + datetime.timedelta(days=1)
 
+summer_birthday = False
 # Columns
 suite_col = 0
 name_col = 1
@@ -53,8 +54,16 @@ def convert_date(row):
     return False
 
 def check_date(bday):
-    if one_week.month == bday[1] or one_day.month == bday[1]:
-        if one_week.day == bday[2] or one_day.day == bday[2]:
+
+    if bday[1] in [6,7,8]:
+        check_mon = bday[1] - 6
+        summer_birthday = True
+        summer_bday=(bday[0],check_mon,bday[2])
+    else:
+        check_mon = bday[1]
+    check_day = bday[2]
+
+    if (one_week.month,one_week.day) == (check_mon, check_day) or (one_day.month,one_day.day) == (check_mon, check_day):
             return True
     return False
 
@@ -77,7 +86,11 @@ def find_suite(row, date):
     name = str(row[name_col].value)
     date = str(date[1]) + '/' + str(date[2])
 
-    send_email(name, date, emails)
+    if summer_birthday == True:
+        send_email_summer(name, summer_bday, emails)
+        summer_birthday=False
+    else:
+        send_email(name, date, emails)
 
 def send_email(name, birthday, emails):
     message = """Subject: Upcoming Birthday
@@ -85,6 +98,23 @@ def send_email(name, birthday, emails):
 Hello!
 
 This is an automated message to remind you that on %(birthday)s, %(name)s will be celebrating their birthday! Remember, it is the responsibility of the suite to make/get something to celebrate. If you do not have ingredients or would like to buy something, please email %(chair)s. Have a great day!
+
+Best wishes,
+B5 Exec
+""" % {"birthday" : birthday, "name" : name, "chair" : birthday_chair}
+
+    server = smtplib.SMTP('smtp.gmail.com:587')
+    server.starttls()
+    server.login(username,password)
+    server.sendmail(fromaddr, emails, message)
+    server.quit()
+
+def send_email_summer(name, birthday, emails):
+    message = """Subject: Upcoming Birthday
+
+Hello!
+
+This is an automated message to remind you that on %(birthday)s, %(name)s will be celebrating their half sbirthday! Remember, it is the responsibility of the suite to make/get something to celebrate. If you do not have ingredients or would like to buy something, please email %(chair)s. Have a great day!
 
 Best wishes,
 B5 Exec
