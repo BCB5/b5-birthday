@@ -12,6 +12,10 @@ username = 'jobabcock95@gmail.com'
 password = 'pxolygbedozsiebx'
 birthday_chair = 'Joe Babcock (babcockj@mit.edu)'
 
+# Heroku login (and probably the login for any other birthday related services)
+# email: burton5-exec@mit.edu
+# Password: b5phoenix
+
 # Dates
 now = datetime.datetime.now()
 one_week = now + datetime.timedelta(days=7)
