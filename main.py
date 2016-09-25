@@ -21,12 +21,13 @@ now = datetime.datetime.now()
 one_week = now + datetime.timedelta(days=7)
 one_day = now + datetime.timedelta(days=1)
 
-summer_birthday = False
 # Columns
 suite_col = 0
 name_col = 1
 kerberos_col = 2
 birthday_col = 4
+
+summer_birthday = False
 
 
 # Filename
@@ -37,16 +38,14 @@ xl_workbook = xlrd.open_workbook(data_file)
 
 def main():
     b5_bday_sheet = xl_workbook.sheet_by_name(b5_bday_sheet_name)
-
     for row in range(b5_bday_sheet.nrows):
         date = convert_date(b5_bday_sheet.row(row))
         if date:
-            find_suite(b5_bday_sheet.row(row), date)
+            find_suite(b5_bday_sheet.row(row), date, summer_birthday)
         else:
             pass
 
 def convert_date(row):
-
     try:
         xl_date = row[birthday_col].value
         bday_date = xlrd.xldate_as_tuple(xl_date, xl_workbook.datemode)
@@ -66,12 +65,18 @@ def check_date(bday):
     else:
         check_mon = bday[1]
     check_day = bday[2]
-
+    print check_mon
+    print check_day
+    print one_week.month
+    print one_week.day
+    print one_day.month
+    print one_day.day
+    print ""
     if (one_week.month,one_week.day) == (check_mon, check_day) or (one_day.month,one_day.day) == (check_mon, check_day):
             return True
     return False
 
-def find_suite(row, date):
+def find_suite(row, date, summer_birthday):
     emails = []
 
     b5_sheet = xl_workbook.sheet_by_name(b5_bday_sheet_name)
@@ -106,7 +111,7 @@ This is an automated message to remind you that on %(birthday)s, %(name)s will b
 Best wishes,
 B5 Exec
 """ % {"birthday" : birthday, "name" : name, "chair" : birthday_chair}
-
+    print name
     server = smtplib.SMTP('smtp.gmail.com:587')
     server.starttls()
     server.login(username,password)
