@@ -102,8 +102,7 @@ def find_suite(row, date, summer_birthday):
         send_email(name, date, emails)
 
 def send_email(name, birthday, emails):
-    message = """Subject: Upcoming Birthday
-
+    message_text = """
 Hello!
 
 This is an automated message to remind you that on %(birthday)s, %(name)s will be celebrating their birthday! Remember, it is the responsibility of the suite to make/get something to celebrate. If you do not have ingredients or would like to buy something, please email %(chair)s. Have a great day!
@@ -111,7 +110,13 @@ This is an automated message to remind you that on %(birthday)s, %(name)s will b
 Best wishes,
 B5 Exec
 """ % {"birthday" : birthday, "name" : name, "chair" : birthday_chair}
-    print name
+
+    message = "From: %s \r\n" % fromaddr
+        + "To: %s\r\n" % emails
+        + "Subject: Upcoming Birthday\r\n"
+        + "\r\n"
+        + message_text
+
     server = smtplib.SMTP('smtp.gmail.com:587')
     server.starttls()
     server.login(username,password)
@@ -119,8 +124,7 @@ B5 Exec
     server.quit()
 
 def send_email_summer(name, birthday, emails):
-    message = """Subject: Upcoming Birthday
-
+    message_text = """
 Hello!
 
 This is an automated message to remind you that on %(birthday)s, %(name)s will be celebrating their half sbirthday! Remember, it is the responsibility of the suite to make/get something to celebrate. If you do not have ingredients or would like to buy something, please email %(chair)s. Have a great day!
@@ -128,6 +132,12 @@ This is an automated message to remind you that on %(birthday)s, %(name)s will b
 Best wishes,
 B5 Exec
 """ % {"birthday" : birthday, "name" : name, "chair" : birthday_chair}
+
+    message = "From: %s \r\n" % fromaddr
+        + "To: %s\r\n" % emails
+        + "Subject: Upcoming Birthday\r\n"
+        + "\r\n"
+        + message_text
 
     server = smtplib.SMTP('smtp.gmail.com:587')
     server.starttls()
