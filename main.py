@@ -65,20 +65,14 @@ def check_date(bday):
     else:
         check_mon = bday[1]
     check_day = bday[2]
-    print check_mon
-    print check_day
-    print one_week.month
-    print one_week.day
-    print one_day.month
-    print one_day.day
-    print ""
+
     if (one_week.month,one_week.day) == (check_mon, check_day) or (one_day.month,one_day.day) == (check_mon, check_day):
             return True
     return False
 
 def find_suite(row, date, summer_birthday):
     emails = []
-
+    print "birthday found"
     b5_sheet = xl_workbook.sheet_by_name(b5_bday_sheet_name)
     room = str(row[suite_col].value)
     suite = room[:-1]
@@ -111,10 +105,10 @@ Best wishes,
 B5 Exec
 """ % {"birthday" : birthday, "name" : name, "chair" : birthday_chair}
 
-    message = "From: %s \r\n" % fromaddr
-        + "To: %s\r\n" % emails
-        + "Subject: Upcoming Birthday\r\n"
-        + "\r\n"
+    message = "From: %s \r\n" % fromaddr \
+        + "To: %s\r\n" % emails \
+        + "Subject: Upcoming Birthday\r\n" \
+        + "\r\n" \
         + message_text
 
     server = smtplib.SMTP('smtp.gmail.com:587')
@@ -133,11 +127,11 @@ Best wishes,
 B5 Exec
 """ % {"birthday" : birthday, "name" : name, "chair" : birthday_chair}
 
-    message = "From: %s \r\n" % fromaddr
-        + "To: %s\r\n" % emails
-        + "Subject: Upcoming Birthday\r\n"
-        + "\r\n"
-        + message_text
+    message = "From: %s \r\n" % fromaddr \
+    + "To: %s\r\n" % emails \
+    + "Subject: Upcoming Birthday\r\n" \
+    + "\r\n" \
+    + message_text
 
     server = smtplib.SMTP('smtp.gmail.com:587')
     server.starttls()
